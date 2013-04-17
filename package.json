@@ -1,6 +1,6 @@
 {
   "name": "dom-vector",
-  "description": "",
+  "description": "sane way to control positions of DOM elements/objects/events",
   "version": "1.0.0",
   "homepage": "https://github.com/dominictarr/dom-vector",
   "repository": {
@@ -8,9 +8,11 @@
     "url": "git://github.com/dominictarr/dom-vector.git"
   },
   "dependencies": {
-    "vec2": "git://github.com/dominictarr/vec2.js.git#change-we-can-believe-in"
+    "vec2": "git://github.com/dominictarr/vec2.js.git"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "hyperscript": "~1.1.0"
+  },
   "scripts": {
     "test": "set -e; for t in test/*.js; do node $t; done"
   },
