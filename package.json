@@ -1,7 +1,7 @@
 {
   "name": "dom-vector",
   "description": "sane way to control positions of DOM elements/objects/events",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "homepage": "https://github.com/dominictarr/dom-vector",
   "repository": {
     "type": "git",
