@@ -3,14 +3,15 @@ var Rec2 = require('rec2')
 
 var mouse, scroll, screen
 
+var element =
 exports.element = function (el) {
-  var rec = el.getClientBoundingRect()    
+  var rec = el.getBoundingClientRect()    
   var rec2 = new Rec2
   rec2.set(rec.left, rec.top)
   //check if it's actually a Rec2 - if it's a vec2
   //skip this step.
   if(rec2.size)
-    rec2.size(rec.width, rec.height)
+    rec2.size.set(rec.width, rec.height)
   return rec2
 }
 
@@ -33,17 +34,17 @@ var elementRec2 = function (el) {
 }
 
 function mouseEvent (ev) {
-  var vec = nev Vec2()
+  var vec = new Vec2()
   return vec.set(ev.clientX, ev.clientY)
 }
 
 exports.mouse = function () {
   if(mouse) return mouse
   mouse = new Vec2()
-  mouse.set(e.clientX, e.clientY)
   window.addEventListener('mousemove', function (e) {
     mouse.set(e.clientX, e.clientY)
   })
+  return mouse
 }
 
 exports.scroll = function () {
@@ -67,10 +68,10 @@ exports.screenSize = function () {
 //if bind=true this will make the element
 //track the position of the Vec2,
 //and will work around the DOM qwerk that
-//
+
 exports.absolute = function (el, bind) {
   var absolute =
-    element(el).subtract(element(el.parentElement)
+    element(el).subtract(element(el.parentElement))
 
   if(bind) {
     el.style.position = 'absolute'
@@ -82,4 +83,6 @@ exports.absolute = function (el, bind) {
     el.style.bottom = ''
     el.style.right  = ''
   }
+  return absolute
 }
+
