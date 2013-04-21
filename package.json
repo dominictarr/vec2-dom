@@ -8,7 +8,8 @@
     "url": "git://github.com/dominictarr/dom-vector.git"
   },
   "dependencies": {
-    "vec2": "git://github.com/dominictarr/vec2.js.git"
+    "vec2": "git://github.com/dominictarr/vec2.js.git",
+    "rec2": "~1.0.0"
   },
   "devDependencies": {
     "hyperscript": "~1.1.0"
