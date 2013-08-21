@@ -20,9 +20,11 @@ exports.element = function (el, bind) {
   return rec2
 }
 
-exports.mouseEvent = function (ev) {
-  return new Vec2(ev.clientX, ev.clientY)
-}
+exports.mouseEvent = mouseEvent
+
+//function (ev) {
+//  return new Vec2(ev.clientX, ev.clientY)
+//}
 
 //var style = getComputedStyle(el)
 // + parseFloat(style['margin-top'])
