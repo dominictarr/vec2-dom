@@ -1,18 +1,19 @@
 ;(function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require=="function"&&require;if(!s&&o)return o(n,!0);if(r)return r(n,!0);throw new Error("Cannot find module '"+n+"'")}var u=t[n]={exports:{}};e[n][0].call(u.exports,function(t){var r=e[n][1][t];return i(r?r:t)},u,u.exports)}return t[n].exports}var r=typeof require=="function"&&require;for(var s=0;s<n.length;s++)i(n[s]);return i})({1:[function(require,module,exports){
-
 var domv = require('../')
 var Vec2 = require('vec2')
 var h    = require('hyperscript')
+var o    = require('observable')
+
 var mouse = domv.mouse()
 
+//this should be a module.
 function drag (move) {
   var start = new Vec2(mouse.x, mouse.y)
   var diff = new Vec2(0, 0)
-  function onMove () {
-//    move.call(
-  }
   var onMove
   mouse.change(onMove = function () {
+    //can easily disable the other axi
+    //for draging in only one dimention.
     move(diff.set(mouse.x, mouse.y).subtract(start)) 
   })
   window.addEventListener('mouseup', function () {
@@ -20,30 +21,157 @@ function drag (move) {
     diff.dropped = true
     move(diff)
   })
+  move(diff.set(mouse.x, mouse.y).subtract(start)) 
 }
 
 var div
 document.body.appendChild(
-  div = h('div',
-    {style:
-      {position: 'absolute'}
-    },
-    h('h1','DRAG ME', {
-      onmousedown: function () {
-        var abs = domv.absolute(div, true) //true means bound.
-        var start = new Vec2(abs.x, abs.y)
-        drag(function (move) {
-          if(move.end) return          
+h('div', {style: {width: '100%', position: 'relative'}},
+  h('div', {style: 
+      {
+//        background: 'fixed url(./example/grid.jpg)',
+        'background-attachment': 'none',
+//        'background-repeat':'no-repeat',
+        width     : '400px',
+        height    : '400px',
+        margin    : 'auto',
+        top       : '50%',
+        position  : 'relative',
+        //'margin-top' : '200px',
+        overflow  : 'scroll',
+        'box-shadow': 'inset 0 0 40px black',
+        'border-radius': '10px',
+        border: 'solid 1px black'
 
-          abs.set(start.add(move, true))
-        })
       }
-    })
+    },
+      h('div', {style: {
+        width: '600px', height: '600px'
+      }},
+        h('img', {src:'./example/grid.jpg'},{style: {
+          position: 'absolute'
+        }}),
+        div = h('div',
+          {style:
+            {position: 'absolute'}
+          },
+          h('h1','DRAGME', {
+            style:{border: 'solid 4px red', position: 'relative'},
+            onmousedown: function () {
+              var abs = domv.absolute(div, true) //true means bound.
+              var start = new Vec2(abs.x, abs.y)
+              drag(function (move) {
+                if(move.end) return
+                abs.set(start.add(move, true))
+              })
+            }
+          })
+        )
+      )
+    )
   )
-
 )
 
-},{"../":2,"vec2":3,"hyperscript":4}],3:[function(require,module,exports){
+function dim (vec, dim) {
+  var v = o()
+  vec.change(function (e) {
+    v(vec[dim])
+  })
+  v(vec[dim])
+  return v
+}
+
+var invisible = {
+  style: { 
+    background: 'hsla(0,0%,0%,0)', 
+    'pointer-events': 'none',
+     'z-index': 1000,
+  } }
+
+var fixed = {
+  style: {
+    position: 'fixed',
+    left    : '0px',
+    top     : '0px'
+  } }
+
+var vert = h('div', invisible, fixed, {
+  style: {
+    height  : '100%',
+    'border-right'   :'1px solid black',
+  }
+}) 
+
+var horz = h('div', invisible, fixed, {
+  style: {
+    width   : '100%',
+    'border-bottom'   :'1px solid black',
+  }
+}) 
+
+mouse.change(function () {
+//  console.log(mouse.x, mouse.y)
+  vert.style.width = mouse.x + 'px'
+  horz.style.height = mouse.y + 'px'
+})
+
+document.body.appendChild(horz);
+document.body.appendChild(vert);
+
+var container
+document.body.appendChild(
+  container= h('div',  {style: {
+        width: '300px',
+        border: '1px solid black',
+        background: 'white',
+        'box-shadow': '3px 3px 10px hsla(0, 30%, 30%, 0.5)'
+      }
+    },
+    h('div', 
+      {style: {
+        background: 'red',
+    }},
+    //note, the outer div is only draggable
+    //by it's title.
+      h('h1', 'draggable', {style: {margin: '0px'}}),
+      {onmousedown: function () {
+        var abs = domv.absolute(container, true) //true means bound.
+        var start = new Vec2(abs.x, abs.y)
+        drag(function (move) {
+          if(move.end) return
+          abs.set(start.add(move, true))
+        })
+
+      }}
+    ),
+    h('p', 'Contents....')
+  )
+)
+
+var tvert = h('div', invisible, fixed, {
+  style: {
+    height  : '100%',
+    'border-right'   :'1px solid black',
+  }
+}) 
+
+var thorz = h('div', invisible, fixed, {
+  style: {
+    width   : '100%',
+    'border-bottom'   :'1px solid black',
+  }
+}) 
+var touch = domv.touch()
+
+touch.change(function () {
+//  console.log(mouse.x, mouse.y)
+  tvert.style.width = mouse.x + 'px'
+  thorz.style.height = mouse.y + 'px'
+})
+
+
+
+},{"../":2,"vec2":3,"hyperscript":4,"observable":5}],3:[function(require,module,exports){
 ;(function inject(clean, precision, undef) {
 
   function Vec2(x, y) {
@@ -421,6 +549,231 @@ document.body.appendChild(
 
 
 
+},{}],5:[function(require,module,exports){
+;(function () {
+
+// bind a to b -- One Way Binding
+function bind1(a, b) {
+  a(b()); b(a)
+}
+//bind a to b and b to a -- Two Way Binding
+function bind2(a, b) {
+  b(a()); a(b); b(a);
+}
+
+//---util-funtions------
+
+//check if this call is a get.
+function isGet(val) {
+  return undefined === val
+}
+
+//check if this call is a set, else, it's a listen
+function isSet(val) {
+  return 'function' !== typeof val
+}
+
+//trigger all listeners
+function all(ary, val) {
+  for(var k in ary)
+    ary[k](val)
+}
+
+//remove a listener
+function remove(ary, item) {
+  delete ary[ary.indexOf(item)]
+}
+
+//register a listener
+function on(emitter, event, listener) {
+  (emitter.on || emitter.addEventListener)
+    .call(emitter, event, listener, false)
+}
+
+function off(emitter, event, listener) {
+  (emitter.removeListener || emitter.removeEventListener || emitter.off)
+    .call(emitter, event, listener, false)
+}
+
+//An observable that stores a value.
+
+function value () {
+  var _val, listeners = []
+  return function (val) {
+    return (
+      isGet(val) ? _val
+    : isSet(val) ? all(listeners, _val = val)
+    : (listeners.push(val), val(_val), function () {
+        remove(listeners, val)
+      })
+  )}}
+  //^ if written in this style, always ends )}}
+
+/*
+##property
+observe a property of an object, works with scuttlebutt.
+could change this to work with backbone Model - but it would become ugly.
+*/
+
+function property (model, key) {
+  return function (val) {
+    return (
+      isGet(val) ? model.get(key) :
+      isSet(val) ? model.set(key, val) :
+      (on(model, 'change:'+key, val), val(model.get(key)), function () {
+        off(model, 'change:'+key, val)
+      })
+    )}}
+
+/*
+note the use of the elvis operator `?:` in chained else-if formation,
+and also the comma operator `,` which evaluates each part and then
+returns the last value.
+
+only 8 lines! that isn't much for what this baby can do!
+*/
+
+function transform (observable, down, up) {
+  if('function' !== typeof observable)
+    throw new Error('transform expects an observable')
+  return function (val) {
+    return (
+      isGet(val) ? down(observable())
+    : isSet(val) ? observable((up || down)(val))
+    : observable(function (_val) { val(down(_val)) })
+    )}}
+
+function not(observable) {
+  return transform(observable, function (v) { return !v })
+}
+
+function listen (element, event, attr, listener) {
+  function onEvent () {
+    listener('function' === typeof attr ? attr() : element[attr])
+  }
+  on(element, event, onEvent)
+  onEvent()
+  return function () {
+    off(element, event, onEvent)
+  }
+}
+
+//observe html element - aliased as `input`
+function attribute(element, attr, event) {
+  attr = attr || 'value'; event = event || 'input'
+  return function (val) {
+    return (
+      isGet(val) ? element[attr]
+    : isSet(val) ? element[attr] = val
+    : listen(element, event, attr, val)
+    )}
+}
+
+// observe a select element
+function select(element) {
+  function _attr () {
+      return element[element.selectedIndex].value;
+  }
+  function _set(val) {
+    for(var i=0; i < element.options.length; i++) {
+      if(element.options[i].value == val) element.selectedIndex = i;
+    }
+  }
+  return function (val) {
+    return (
+      isGet(val) ? element.options[element.selectedIndex].value
+    : isSet(val) ? _set(val)
+    : listen(element, 'change', _attr, val)
+    )}
+}
+
+//toggle based on an event, like mouseover, mouseout
+function toggle (el, up, down) {
+  var i = false
+  return function (val) {
+    function onUp() {
+      i || val(i = true)
+    }
+    function onDown () {
+      i && val(i = false)
+    }
+    return (
+      isGet(val) ? i
+    : isSet(val) ? undefined //read only
+    : (on(el, up, onUp), on(el, down || up, onDown), val(i), function () {
+      off(el, up, onUp); off(el, down || up, onDown)
+    })
+  )}}
+
+function error (message) {
+  throw new Error(message)
+}
+
+function compute (observables, compute) {
+  function getAll() {
+    console.log('getAll')
+    return compute.apply(null, observables.map(function (e) {return e()}))
+  }
+
+  var cur = [], init = true
+
+  var v = value()
+
+  observables.forEach(function (f, i) {
+    console.log('init')
+    f(function (val) {
+      cur[i] = val
+      if(init) return
+      v(compute.apply(null, cur))
+    })
+  })
+  init = false
+  v(function () {
+    console.log('comput')
+    compute.apply(null, cur)
+  })
+
+  return v
+/*  
+  return function (val) {
+    return (
+      isGet(val) ? getAll()
+    : isSet(val) ? error('read-only')
+    : observables.forEach(function (obs) {
+        //not very good
+        obs(function () { val(getAll()) })
+      })
+    )}*/
+}
+
+function boolean (observable, truthy, falsey) {
+  return transform(observable, function (val) {
+      return val ? truthy : falsey
+    }, function (val) {
+      return val == truthy ? true : false
+    })
+  }
+
+var exports = value
+exports.bind1     = bind1
+exports.bind2     = bind2
+exports.value     = value
+exports.not       = not
+exports.property  = property
+exports.input     =
+exports.attribute = attribute
+exports.select    = select
+exports.compute   = compute
+exports.transform = transform
+exports.boolean   = boolean
+exports.toggle    = toggle
+exports.hover     = function (e) { return toggle(e, 'mouseover', 'mouseout')}
+exports.focus     = function (e) { return toggle(e, 'focus', 'blur')}
+
+if('object' === typeof module) module.exports = exports
+else                           this.observable = exports
+})()
+
 },{}],2:[function(require,module,exports){
 var Vec2 = require('vec2')
 var Rec2 = require('rec2')
@@ -428,20 +781,27 @@ var Rec2 = require('rec2')
 var mouse, scroll, screen
 
 var element =
-exports.element = function (el) {
+exports.element = function (el, bind) {
   var rec = el.getBoundingClientRect()    
   var rec2 = new Rec2
-  rec2.set(rec.left, rec.top)
+  
+  var style = getComputedStyle(el)
+  console.log(style.left, style.right)
+  rec2.set(rec.left - parseFloat(style['margin-left'])
+    , rec.top - parseFloat(style['margin-top']))
   //check if it's actually a Rec2 - if it's a vec2
   //skip this step.
   if(rec2.size)
     rec2.size.set(rec.width, rec.height)
+
   return rec2
 }
 
-exports.mouseEvent = function (ev) {
-  return new Vec2(ev.clientX, ev.clientY)
-}
+exports.mouseEvent = mouseEvent
+
+//function (ev) {
+//  return new Vec2(ev.clientX, ev.clientY)
+//}
 
 //var style = getComputedStyle(el)
 // + parseFloat(style['margin-top'])
@@ -465,11 +825,26 @@ function mouseEvent (ev) {
 exports.mouse = function () {
   if(mouse) return mouse
   mouse = new Vec2()
-//  mouse.set(e.clientX, e.clientY)
   window.addEventListener('mousemove', function (e) {
     mouse.set(e.clientX, e.clientY)
   })
   return mouse
+}
+
+var touch
+exports.touch = function (el) {
+  el = el || document.body
+  if(touch) return touch
+  touch = new Vec2()
+  touch.set(0, 0)
+  el.addEventListener('touchmove', onTouchMove)
+  el.addEventListener('MozTouchMove', onTouchMove)
+
+  function onTouchMove (e) {
+    var m = e.touches[0]
+    touch.set(m.clientX, m.clientY)
+  }
+
 }
 
 exports.scroll = function () {
@@ -493,7 +868,7 @@ exports.screenSize = function () {
 //if bind=true this will make the element
 //track the position of the Vec2,
 //and will work around the DOM qwerk that
-//
+
 exports.absolute = function (el, bind) {
   var absolute =
     element(el).subtract(element(el.parentElement))
@@ -511,7 +886,11 @@ exports.absolute = function (el, bind) {
   return absolute
 }
 
-},{"vec2":3,"rec2":5}],4:[function(require,module,exports){
+exports.size = function (el, bind) {
+  
+}
+
+},{"vec2":3,"rec2":6}],4:[function(require,module,exports){
 var split = require('browser-split')
 var ClassList = require('class-list')
 var DataSet = require('data-set')
@@ -622,7 +1001,7 @@ function isArray (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]'
 }
 
-},{"browser-split":6,"data-set":7,"class-list":8}],9:[function(require,module,exports){
+},{"browser-split":7,"class-list":8,"data-set":9}],10:[function(require,module,exports){
 var events = require('events');
 
 exports.isArray = isArray;
@@ -975,7 +1354,7 @@ exports.format = function(f) {
   return str;
 };
 
-},{"events":10}],6:[function(require,module,exports){
+},{"events":11}],7:[function(require,module,exports){
 (function(){/*!
  * Cross-Browser Split 1.1.1
  * Copyright 2007-2012 Steven Levithan <stevenlevithan.com>
@@ -1184,7 +1563,7 @@ function isTruthy(value) {
     return !!value
 }
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -1238,7 +1617,7 @@ process.chdir = function (dir) {
     throw new Error('process.chdir is not supported');
 };
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 (function(process){if (!process.EventEmitter) process.EventEmitter = function () {};
 
 var EventEmitter = exports.EventEmitter = process.EventEmitter;
@@ -1424,7 +1803,7 @@ EventEmitter.prototype.listeners = function(type) {
 };
 
 })(require("__browserify_process"))
-},{"__browserify_process":11}],5:[function(require,module,exports){
+},{"__browserify_process":12}],6:[function(require,module,exports){
 var Vec2 = require('vec2')
 
 var inherits = require('util').inherits
@@ -1472,7 +1851,7 @@ R.collide = function (box) {
   )
 }
 
-},{"util":9,"vec2":3}],7:[function(require,module,exports){
+},{"util":10,"vec2":3}],9:[function(require,module,exports){
 var Weakmap = require("weakmap")
 var Individual = require("individual")
 
@@ -1516,7 +1895,7 @@ function createHash(elem) {
     return hash
 }
 
-},{"weakmap":12,"individual":13}],12:[function(require,module,exports){
+},{"weakmap":13,"individual":14}],13:[function(require,module,exports){
 (function(){/* (The MIT License)
  *
  * Copyright (c) 2012 Brandon Benvie <http://bbenvie.com>
@@ -1759,7 +2138,7 @@ void function(global, undefined_, undefined){
 }((0, eval)('this'));
 
 })()
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function(){var root = require("global")
 
 module.exports = Individual
@@ -1778,7 +2157,7 @@ function Individual(key, value) {
 }
 
 })()
-},{"global":14}],14:[function(require,module,exports){
+},{"global":15}],15:[function(require,module,exports){
 (function(global){/*global window, global*/
 if (typeof global !== "undefined") {
     module.exports = global
