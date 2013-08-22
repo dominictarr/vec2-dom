@@ -1,7 +1,7 @@
 var Vec2 = require('vec2')
 var Rec2 = require('rec2')
 
-var mouse, scroll, screen
+var mouse, scroll, screen, size
 
 var element =
 exports.element = function (el, bind) {
@@ -9,13 +9,21 @@ exports.element = function (el, bind) {
   var rec2 = new Rec2
   
   var style = getComputedStyle(el)
-  console.log(style.left, style.right)
+
   rec2.set(rec.left - parseFloat(style['margin-left'])
     , rec.top - parseFloat(style['margin-top']))
   //check if it's actually a Rec2 - if it's a vec2
   //skip this step.
   if(rec2.size)
     rec2.size.set(rec.width, rec.height)
+
+  if(bind) {
+    rec2.size.change(function (size) {
+      console.log('wh', size.x, size.y)
+      el.style.width  = size.x + 'px'
+      el.style.height = size.y + 'px'
+    })
+  }
 
   return rec2
 }
@@ -69,6 +77,8 @@ exports.screenSize = function () {
   window.addEventListener('resize', function (e) {
     size.set(window.innerWidth, window.innerHeight)
   })
+  size.set(window.innerWidth, window.innerHeight)
+  return size
 }
 
 
@@ -93,6 +103,3 @@ exports.absolute = function (el, bind) {
   return absolute
 }
 
-exports.size = function (el, bind) {
-  
-}
