@@ -1,6 +1,6 @@
-# dom-vector
+# vec2-dom
 
-treat sizes and positions on the dom as vectors.
+represent dom positions and areas as vectors.
 
 ## License
 

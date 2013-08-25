@@ -1,11 +1,11 @@
 {
-  "name": "dom-vector",
+  "name": "vec2-dom",
   "description": "sane way to control positions of DOM elements/objects/events",
   "version": "1.1.0",
-  "homepage": "https://github.com/dominictarr/dom-vector",
+  "homepage": "https://github.com/dominictarr/vec2-dom",
   "repository": {
     "type": "git",
-    "url": "git://github.com/dominictarr/dom-vector.git"
+    "url": "git://github.com/dominictarr/vec2-dom.git"
   },
   "dependencies": {
     "vec2": "~1.3",
