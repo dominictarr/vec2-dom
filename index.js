@@ -9,9 +9,9 @@ exports.element = function (el, bind) {
   var rec2 = new Rec2
   
   var style = getComputedStyle(el)
-
-  rec2.set(rec.left - parseFloat(style['margin-left'])
-    , rec.top - parseFloat(style['margin-top']))
+  console.log(style)
+  rec2.set((rec.left || 0)  - (parseFloat(style['margin-left']) || 0)
+    , (rec.top || 0) - (parseFloat(style['margin-top']) || 0)) 
   //check if it's actually a Rec2 - if it's a vec2
   //skip this step.
   if(rec2.size)
