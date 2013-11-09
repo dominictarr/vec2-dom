@@ -3,7 +3,7 @@ var Vec2 = require('vec2')
 var h    = require('hyperscript')
 var o    = require('observable')
 
-var mouse = domv.mouse()
+var mouse = MOUSE = domv.mouse()
 
 //this should be a module.
 function drag (move) {
