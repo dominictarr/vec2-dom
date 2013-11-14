@@ -93,7 +93,7 @@ exports.absolute = function (el, bind) {
     el.style.position = 'absolute'
 
   var absolute =
-    element(el).subtract(element(el.parentElement))
+    element(el, bind).subtract(element(el.parentElement))
 
   if(bind) {
     function place () {
