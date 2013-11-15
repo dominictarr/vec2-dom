@@ -20,7 +20,6 @@ exports.element = function (el, bind) {
 
   if(bind) {
     rec2.size.change(function (size) {
-      console.log('wh', size.x, size.y)
       el.style.width  = size.x + 'px'
       el.style.height = size.y + 'px'
     })
